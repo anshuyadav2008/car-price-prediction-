@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoValue | Car Price Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="#"><span class="brand-mark">A</span><span>Auto<span class="brand-light">Value</span></span></a>
+    <div class="side-label">WORKSPACE</div>
+    <a class="nav-item active" href="#"><span>⌂</span> Overview</a>
+    <a class="nav-item" href="#predictor"><span>◈</span> Price Predictor</a>
+    <a class="nav-item" href="#how-it-works"><span>▤</span> How it works</a>
+    <div class="sidebar-bottom">
+      <div class="status-dot"></div><span>ML Engine Online</span>
+      <p>Powered by Linear Regression</p>
+      <div class="side-foot">CAR PRICE INTELLIGENCE<br>PROJECT EDITION · 2026</div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="crumb">Workspace <span>/</span> <b>Overview</b></div>
+      <div class="top-right"><span class="live-pill"><i></i> SYSTEM LIVE</span><div class="avatar">AV</div></div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span></span> SMART VALUATION PLATFORM</div>
+        <h1>Know what your car<br>is <em>really worth.</em></h1>
+        <p>Make confident decisions with machine-learning powered car price estimates, trained on real-world vehicle data.</p>
+        <a class="primary-link" href="#predictor">Estimate a car price <span>↗</span></a>
+      </div>
+      <div class="hero-art">
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <div class="hero-car">✦</div>
+        <div class="floating-tag tag-top"><span>AI</span> Smart estimation</div>
+        <div class="floating-tag tag-bottom"><b>ML</b> Model trained</div>
+        <div class="hero-number">01 <span>/ INTELLIGENCE</span></div>
+      </div>
+    </section>
+
+    <section class="stats-grid">
+      <div class="stat-card"><div class="stat-top">DATASET SIZE <span>↗</span></div><div class="stat-value">{{ metrics.total_cars }}<small> cars</small></div><div class="stat-foot">Records used for model training</div></div>
+      <div class="stat-card"><div class="stat-top">MODEL ACCURACY <span>◎</span></div><div class="stat-value">{{ (metrics.r2 * 100)|round(1) }}<small>%</small></div><div class="stat-foot">R² score on test data</div></div>
+      <div class="stat-card"><div class="stat-top">AVERAGE ERROR <span>⌁</span></div><div class="stat-value">{{ metrics.mae }}<small> L</small></div><div class="stat-foot">Mean absolute error · lakh</div></div>
+      <div class="stat-card"><div class="stat-top">INPUT FEATURES <span>⌘</span></div><div class="stat-value">{{ metrics.features }}<small> fields</small></div><div class="stat-foot">Vehicle attributes analysed</div></div>
+    </section>
+
+    <section class="predict-section" id="predictor">
+      <div class="section-heading"><div><div class="eyebrow"><span></span> THE VALUATION STUDIO</div><h2>Calculate your car's value</h2><p>Enter the vehicle details below to generate an estimated resale price.</p></div><div class="step-chip">01 <span>—</span> VEHICLE DETAILS</div></div>
+      <div class="predict-layout">
+        <form id="predictForm" class="form-card">
+          <div class="form-grid">
+            <label class="field full"><span>CAR MANUFACTURING YEAR</span><select name="year" required id="year"></select><small>Choose the year shown on your registration</small></label>
+            <label class="field"><span>ORIGINAL SHOWROOM PRICE (₹ LAKH)</span><input name="present_price" type="number" min="0.1" step="0.01" placeholder="e.g. 8.50" required></label>
+            <label class="field"><span>KM DRIVEN</span><input name="kms_driven" type="number" min="0" step="1" placeholder="e.g. 45000" required></label>
+            <label class="field"><span>FUEL TYPE</span><select name="fuel_type" required><option value="Petrol">Petrol</option><option value="Diesel">Diesel</option><option value="CNG">CNG</option></select></label>
+            <label class="field"><span>SELLER TYPE</span><select name="seller_type" required><option value="Dealer">Dealer</option><option value="Individual">Individual</option></select></label>
+            <label class="field"><span>TRANSMISSION</span><select name="transmission" required><option value="Manual">Manual</option><option value="Automatic">Automatic</option></select></label>
+            <label class="field"><span>PREVIOUS OWNERS</span><select name="owner" required><option value="0">First owner</option><option value="1">Second owner</option><option value="2">Third owner</option><option value="3">Fourth or more</option></select></label>
+          </div>
+          <button class="predict-button" type="submit"><span>Generate price estimate</span><b>→</b></button>
+          <div class="secure-note"><span>✧</span> Your details are processed locally by this project.</div>
+        </form>
+        <div class="result-card" id="resultCard">
+          <div class="result-top"><span class="result-icon">✦</span><span class="result-label">YOUR ESTIMATED VALUE</span></div>
+          <div class="result-placeholder" id="resultContent"><div class="result-graphic">₹</div><h3>Your estimate<br>will appear here.</h3><p>Fill in the vehicle details and run the prediction to see the estimated resale value.</p></div>
+          <div class="result-success" id="resultSuccess" hidden><div class="result-caption">PREDICTED RESALE PRICE</div><div class="price" id="priceValue">₹ 0.00 <small>Lakh</small></div><div class="result-rule"></div><div class="result-info"><span>MODEL</span><b>Linear Regression</b></div><div class="result-info"><span>STATUS</span><b class="success-text">● Prediction complete</b></div><p class="disclaimer" id="priceNote"></p></div>
+          <div class="result-bottom"><span class="pulse"></span> LIVE MODEL CONNECTION <span class="result-id">AV / 01</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="how-section" id="how-it-works">
+      <div class="eyebrow"><span></span> UNDER THE HOOD</div><h2>From car details to clarity.</h2>
+      <div class="how-grid">
+        <div class="how-card"><div class="how-num">01</div><h3>Input details</h3><p>Provide year, kilometres driven, fuel, transmission and pricing information.</p></div>
+        <div class="how-card"><div class="how-num">02</div><h3>ML processing</h3><p>The trained Linear Regression model analyses the vehicle attributes and learned patterns.</p></div>
+        <div class="how-card"><div class="how-num">03</div><h3>Price estimate</h3><p>Get an estimated resale price in lakh, generated from the supplied dataset.</p></div>
+      </div>
+    </section>
+    <footer><span>© 2026 AUTOVALUE</span><span>ACADEMIC MACHINE LEARNING PROJECT · NOT A LIVE MARKET QUOTE</span></footer>
+  </main>
+</div>
+<script>
+const yearSelect = document.getElementById('year');
+const currentYear = new Date().getFullYear();
+for (let y = currentYear; y >= 1990; y--) {
+  const opt = document.createElement('option'); opt.value = y; opt.textContent = y;
+  if (y === 2015) opt.selected = true;
+  yearSelect.appendChild(opt);
+}
+const form = document.getElementById('predictForm');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const button = form.querySelector('button');
+  button.disabled = true; button.querySelector('span').textContent = 'Calculating estimate...';
+  try {
+    const payload = Object.fromEntries(new FormData(form).entries());
+    const response = await fetch('/predict', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Prediction failed.');
+    document.getElementById('resultContent').hidden = true;
+    document.getElementById('resultSuccess').hidden = false;
+    document.getElementById('priceValue').innerHTML = `₹ ${data.predicted_price.toFixed(2)} <small>Lakh</small>`;
+    document.getElementById('priceNote').textContent = data.note;
+    document.getElementById('resultCard').classList.add('has-result');
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    button.disabled = false; button.querySelector('span').textContent = 'Generate price estimate';
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+car_price_model.pkl
+.pytest_cache/
+.coverage
+.DS_Store
+Thumbs.db
